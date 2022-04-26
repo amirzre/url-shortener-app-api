@@ -1,4 +1,4 @@
-FROM python:3.9-alpine
+FROM python:3.10-alpine3.14
 LABEL maintainer="Amir Zare"
 
 ENV PYTHONUNBUFFERED 1
@@ -12,9 +12,9 @@ EXPOSE 8000
 
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
-    apk add --update --no-cache postgresql-client && \
+    apk add --update --no-cache postgresql-client jpeg-dev && \
     apk add --update --no-cache --virtual .tmp-deps \
-        build-base postgresql-dev musl-dev linux-headers && \
+        build-base postgresql-dev musl-dev linux-headers zlib zlib-dev && \
     /py/bin/pip install -r /requirements.txt && \
     apk del .tmp-deps && \
     adduser --disabled-password --no-create-home app && \
