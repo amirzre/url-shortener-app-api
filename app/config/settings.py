@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # Local App
     'core.apps.CoreConfig',
     'user.apps.UserConfig',
+    'shortener.apps.ShortenerConfig',
     # Third-Party App
     'rest_framework',
     'rest_framework_simplejwt',
@@ -147,6 +148,8 @@ MEDIA_ROOT = '/vol/web/media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'core.User'
+
+SITE_URL = 'http://127.0.0.1:8000'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

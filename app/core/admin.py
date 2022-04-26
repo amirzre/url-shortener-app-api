@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from core.models import User
+from core.models import User, ShortUrl
 
 
 @admin.register(User)
@@ -24,3 +24,9 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('email', 'password1', 'password2')
         }),
     )
+
+
+@admin.register(ShortUrl)
+class ShortUrlAdmin(admin.ModelAdmin):
+    list_display = ('id', 'short_id', 'url', 'count', 'created')
+    list_filter = ('created',)
