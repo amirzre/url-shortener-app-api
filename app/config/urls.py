@@ -23,6 +23,16 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('user.urls', namespace='user')),
     path('', include('shortener.urls', namespace='shortener')),
+
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/swagger-ui/',
+         SpectacularSwaggerView.as_view(url_name='schema'),
+         name='swagger-ui'
+         ),
+    path('api/schema/redoc/',
+         SpectacularRedocView.as_view(url_name='schema'),
+         name='redoc'
+         ),
 ]
 
 if settings.DEBUG:
@@ -30,3 +40,8 @@ if settings.DEBUG:
         settings.MEDIA_URL,
         document_root=settings.MEDIA_ROOT,
     )
+    urlpatterns = urlpatterns + static(
+        settings.STATIC_URL,
+        document_root=settings.STATIC_ROOT
+    )
+
