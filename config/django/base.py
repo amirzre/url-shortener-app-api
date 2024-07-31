@@ -29,6 +29,8 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "django_extensions",
     "rest_framework_jwt",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
 ]
 
 INSTALLED_APPS = [
@@ -84,7 +86,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    "default": env.db("DATABASE_URL", default="postgres:///urlshortener"),
+    "default": env.db("DATABASE_URL", default="psql://postgres:postgrsql@127.0.0.1:5432/urlshortener"),
 }
 
 if os.environ.get("GITHUB_WORKFLOW"):
@@ -145,6 +147,7 @@ REST_FRAMEWORK = {
     # 'EXCEPTION_HANDLER': 'urlshortener.api.exception_handlers.hacksoft_proposed_exception_handler',
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "DEFAULT_AUTHENTICATION_CLASSES": [],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 APP_DOMAIN = env("APP_DOMAIN", default="http://localhost:8000")

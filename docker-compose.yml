@@ -1,5 +1,3 @@
-name: urlshortener
-
 services:
   db:
     image: postgres:14.1
