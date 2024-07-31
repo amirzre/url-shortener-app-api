@@ -21,6 +21,7 @@ LOCAL_APPS = [
     "urlshortener.common.apps.CommonConfig",
     "urlshortener.api.apps.ApiConfig",
     "urlshortener.users.apps.UsersConfig",
+    "urlshortener.shortener.apps.ShortenerConfig",
 ]
 
 THIRD_PARTY_APPS = [
