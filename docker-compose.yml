@@ -1,10 +1,10 @@
-version: "3.12.4"
+name: urlshortener
 
 services:
   db:
     image: postgres:14.1
     environment:
-      - POSTGRES_DB=urlshortener_db
+      - POSTGRES_DB=urlshortener
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgresql
 
@@ -14,13 +14,11 @@ services:
       dockerfile: docker/local.Dockerfile
     command: python manage.py runserver 0.0.0.0:8000
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/urlshortener_db
-      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/urlshortener
     volumes:
       - .:/app
     ports:
       - "8000:8000"
     depends_on:
       - db
-      - rabbitmq
     restart: on-failure
