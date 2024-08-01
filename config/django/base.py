@@ -143,6 +143,16 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATIC_URL = "/static/"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.environ.get("REDIS_LOCATION", default="redis://localhost:6379/1"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}
+
 REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "urlshortener.api.exception_handlers.drf_default_with_modifications_exception_handler",
     # 'EXCEPTION_HANDLER': 'urlshortener.api.exception_handlers.hacksoft_proposed_exception_handler',
