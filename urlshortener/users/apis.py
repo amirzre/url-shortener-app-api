@@ -1,40 +1,70 @@
-from rest_framework import serializers
+from django.core.exceptions import ValidationError
+from django.core.validators import MinLengthValidator
+from drf_spectacular.utils import extend_schema
+from rest_framework import serializers, status
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from urlshortener.api.pagination import (
-    LimitOffsetPagination,
-    get_paginated_response,
-)
 from urlshortener.users.models import BaseUser
-from urlshortener.users.selectors import user_list
+from urlshortener.users.services import user_create
+from urlshortener.users.validators import (
+    letter_validator,
+    number_validator,
+    special_char_validator,
+)
 
 
-# TODO: When JWT is resolved, add authenticated version
-class UserListApi(APIView):
-    class Pagination(LimitOffsetPagination):
-        default_limit = 1
+class UserCreateApi(APIView):
+    class InputUserSerializer(serializers.Serializer):
+        email = serializers.EmailField(required=True)
+        password = serializers.CharField(
+            required=True,
+            validators=[
+                MinLengthValidator(limit_value=8),
+                number_validator,
+                letter_validator,
+                special_char_validator,
+            ]
+        )
+        confirm_password = serializers.CharField(
+            required=True,
+            validators=[MinLengthValidator(limit_value=8)]
+        )
 
-    class FilterSerializer(serializers.Serializer):
-        id = serializers.IntegerField(required=False)
-        is_admin = serializers.BooleanField(required=False, allow_null=True, default=None)
-        email = serializers.EmailField(required=False)
+        def validate_email(self, email):
+            if BaseUser.objects.filter(email=email).exists():
+                raise serializers.ValidationError("Email already taken.")
+            return email
+        
+        def validate(self, attrs):
+            if not attrs.get("password") or not attrs.get("confirm_password"):
+                raise ValidationError("Password and confirm password are required.")
+            
+            if attrs.get("password") != attrs.get("confirm_password"):
+                raise serializers.ValidationError("Password and confirm password must be equal.")
+            
+            return attrs
 
-    class OutputSerializer(serializers.ModelSerializer):
+    class OutputUserSerializer(serializers.ModelSerializer):
         class Meta:
             model = BaseUser
-            fields = ("id", "email", "is_admin")
+            fields = ("id", "email", "is_admin", "is_active")
 
-    def get(self, request):
-        # Make sure the filters are valid, if passed
-        filters_serializer = self.FilterSerializer(data=request.query_params)
-        filters_serializer.is_valid(raise_exception=True)
+    @extend_schema(request=InputUserSerializer, responses=OutputUserSerializer)
+    def post(self, request):
+        serializer = self.InputUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        users = user_list(filters=filters_serializer.validated_data)
-
-        return get_paginated_response(
-            pagination_class=self.Pagination,
-            serializer_class=self.OutputSerializer,
-            queryset=users,
-            request=request,
-            view=self,
-        )
+        try:
+            user = user_create(
+                email=serializer.validated_data.get("email"),
+                password=serializer.validated_data.get("password"),
+            )
+        except ValidationError:
+            raise Response(
+                data={"error": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        output_serializer = self.OutputUserSerializer(user)
+        return Response(data=output_serializer.data, status=status.HTTP_201_CREATED) 
