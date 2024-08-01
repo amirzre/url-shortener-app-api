@@ -5,7 +5,7 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from urlshortener.shortener.models import Shortner
+from urlshortener.shortener.models import Shortener
 from urlshortener.shortener.selectors import get_long_url
 from urlshortener.shortener.services import create_or_get_short_url
 
@@ -18,7 +18,7 @@ class ShortenerDetailApi(APIView):
         full_short_url = serializers.SerializerMethodField()
 
         class Meta:
-            model = Shortner
+            model = Shortener
             fields = ("short_url", "full_short_url")
 
         def get_full_short_url(self, obj):
