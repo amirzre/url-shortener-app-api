@@ -20,9 +20,7 @@ class SnowflakeIDGenerator:
 
     def __init__(self, datacenter_id: int, machine_id: int):
         if datacenter_id > self.MAX_DATACENTER_ID or datacenter_id < 0:
-            raise ValueError(
-                f"Datacenter ID must be between 0 and {self.MAX_DATACENTER_ID}"
-            )
+            raise ValueError(f"Datacenter ID must be between 0 and {self.MAX_DATACENTER_ID}")
         if machine_id > self.MAX_MACHINE_ID or machine_id < 0:
             raise ValueError(f"Machine ID must be between 0 and {self.MAX_MACHINE_ID}")
 

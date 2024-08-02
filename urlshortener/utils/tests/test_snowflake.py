@@ -6,7 +6,6 @@ from urlshortener.utils.snowflake import SnowflakeIDGenerator
 
 
 class TestSnowflakeIDGenerator(TestCase):
-
     def setUp(self):
         self.datacenter_id = 1
         self.machine_id = 1
@@ -110,5 +109,6 @@ class TestSnowflakeIDGenerator(TestCase):
             thread.join()
 
         unique_results = set(results)
-        self.assertEqual(len(unique_results), len(results), "There should be no duplicate IDs in a multithreaded environment")
-
+        self.assertEqual(
+            len(unique_results), len(results), "There should be no duplicate IDs in a multithreaded environment"
+        )

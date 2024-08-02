@@ -24,25 +24,22 @@ class UserCreateApi(APIView):
                 number_validator,
                 letter_validator,
                 special_char_validator,
-            ]
+            ],
         )
-        confirm_password = serializers.CharField(
-            required=True,
-            validators=[MinLengthValidator(limit_value=8)]
-        )
+        confirm_password = serializers.CharField(required=True, validators=[MinLengthValidator(limit_value=8)])
 
         def validate_email(self, email):
             if BaseUser.objects.filter(email=email).exists():
                 raise serializers.ValidationError("Email already taken.")
             return email
-        
+
         def validate(self, attrs):
             if not attrs.get("password") or not attrs.get("confirm_password"):
                 raise ValidationError("Password and confirm password are required.")
-            
+
             if attrs.get("password") != attrs.get("confirm_password"):
                 raise serializers.ValidationError("Password and confirm password must be equal.")
-            
+
             return attrs
 
     class OutputUserSerializer(serializers.ModelSerializer):
@@ -65,6 +62,6 @@ class UserCreateApi(APIView):
                 data={"error": serializer.errors},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         output_serializer = self.OutputUserSerializer(user)
-        return Response(data=output_serializer.data, status=status.HTTP_201_CREATED) 
+        return Response(data=output_serializer.data, status=status.HTTP_201_CREATED)

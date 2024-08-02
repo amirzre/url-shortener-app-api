@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
+
 import os
 import sys
 
 from config.env import BASE_DIR, env
 
 env.read_env(os.path.join(BASE_DIR, ".env"))
+
 
 def main():
     env("DJANGO_SETTINGS_MODULE", default="config.django.base")

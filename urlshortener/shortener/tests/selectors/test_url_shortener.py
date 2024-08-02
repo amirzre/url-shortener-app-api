@@ -10,10 +10,10 @@ from urlshortener.shortener.selectors import get_long_url
 
 class GetLongUrlTests(TestCase):
     def setUp(self):
-        self.short_url = 'short1'
-        self.long_url = 'http://example.com/long'
+        self.short_url = "short1"
+        self.long_url = "http://example.com/long"
         self.snowflake_id = "1234567890"
-        self.cache_key = f'short_url:{self.short_url}'
+        self.cache_key = f"short_url:{self.short_url}"
         self.shortener = Shortener.objects.create(
             snowflake_id=self.snowflake_id,
             short_url=self.short_url,
@@ -27,7 +27,7 @@ class GetLongUrlTests(TestCase):
         result = get_long_url(short_url=self.short_url)
         self.assertEqual(result, self.long_url)
 
-    @patch('urlshortener.shortener.selectors.Shortener.objects.filter')
+    @patch("urlshortener.shortener.selectors.Shortener.objects.filter")
     def test_get_long_url_cache_miss_db_hit(self, mock_filter):
         # Simulate cache miss and database hit
         cache.delete(self.cache_key)
@@ -39,7 +39,7 @@ class GetLongUrlTests(TestCase):
         self.assertEqual(result, self.long_url)
         self.assertEqual(cache.get(self.cache_key), self.long_url)
 
-    @patch('urlshortener.shortener.selectors.Shortener.objects.filter')
+    @patch("urlshortener.shortener.selectors.Shortener.objects.filter")
     def test_get_long_url_cache_miss_db_miss(self, mock_filter):
         # Simulate cache miss and database miss
         cache.delete(self.cache_key)
@@ -50,6 +50,6 @@ class GetLongUrlTests(TestCase):
 
     def test_get_long_url_db_exception(self):
         # Simulate database exception
-        with patch.object(Shortener.objects, 'filter', side_effect=Shortener.DoesNotExist):
+        with patch.object(Shortener.objects, "filter", side_effect=Shortener.DoesNotExist):
             with self.assertRaises(ObjectDoesNotExist):
                 get_long_url(short_url=self.short_url)
