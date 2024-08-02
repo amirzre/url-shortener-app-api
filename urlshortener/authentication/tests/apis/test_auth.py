@@ -8,9 +8,7 @@ from urlshortener.users.models import BaseUser
 
 class AuthApiTests(APITestCase):
     def setUp(self):
-        self.user = BaseUser.objects.create_user(
-            email="test@email.com", password="password123"
-        )
+        self.user = BaseUser.objects.create_user(email="test@email.com", password="password123")
         self.login_url = reverse("api:authentication:jwt:login")
         self.refresh_url = reverse("api:authentication:jwt:refresh")
         self.verify_url = reverse("api:authentication:jwt:verify")

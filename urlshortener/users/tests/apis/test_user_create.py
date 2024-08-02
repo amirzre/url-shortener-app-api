@@ -24,19 +24,19 @@ class UserCreateApiTests(APITestCase):
         data = {"password": "Password123!", "confirm_password": "Password123!"}
         response = self.client.post(self.create_url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("email", response.data['detail'])
+        self.assertIn("email", response.data["detail"])
 
     def test_create_user_with_invalid_email(self):
         data = {"email": "invalidemail", "password": "Password123!", "confirm_password": "Password123!"}
         response = self.client.post(self.create_url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("email", response.data['detail'])
+        self.assertIn("email", response.data["detail"])
 
     def test_create_user_with_missing_password(self):
         data = {"email": "test_user2@email.com", "confirm_password": "Password123!"}
         response = self.client.post(self.create_url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("password", response.data['detail'])
+        self.assertIn("password", response.data["detail"])
 
     def test_create_user_with_non_matching_passwords(self):
         data = {
@@ -46,17 +46,17 @@ class UserCreateApiTests(APITestCase):
         }
         response = self.client.post(self.create_url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("non_field_errors", response.data['detail'])
+        self.assertIn("non_field_errors", response.data["detail"])
 
     def test_create_user_with_weak_password(self):
         data = {"email": "test_user4@email.com", "password": "weakpass", "confirm_password": "weakpass"}
         response = self.client.post(self.create_url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("password", response.data['detail'])
+        self.assertIn("password", response.data["detail"])
 
     def test_create_user_with_duplicate_email(self):
         BaseUser.objects.create_user(email="duplicate_user@email.com", password="Password123!")
         data = {"email": "duplicate_user@email.com", "password": "Password123!", "confirm_password": "Password123!"}
         response = self.client.post(self.create_url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('email', response.data['detail'])
+        self.assertIn("email", response.data["detail"])

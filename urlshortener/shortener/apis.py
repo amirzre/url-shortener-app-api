@@ -45,10 +45,7 @@ class RedirectShortURLView(APIView):
     class OutputRedirectSerializer(serializers.Serializer):
         long_url = serializers.URLField()
 
-    @extend_schema(
-        request=InputRedirectSerializer,
-        responses=OutputRedirectSerializer
-    )
+    @extend_schema(request=InputRedirectSerializer, responses=OutputRedirectSerializer)
     def get(self, request, short_url):
         serializer = self.InputRedirectSerializer(data={"short_url": short_url})
         serializer.is_valid(raise_exception=True)
