@@ -4,9 +4,7 @@ from unittest.mock import Mock, patch
 from django.db import connection
 from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
-from django.utils import timezone
 
-from urlshortener.blog_examples.models import TimestampsOpinionated
 from urlshortener.common.factories import RandomModelFactory, SimpleModelFactory
 from urlshortener.common.services import model_update
 
@@ -108,67 +106,6 @@ class ModelUpdateTests(TestCase):
         self.assertTrue(has_updated)
         self.assertEqual(updated_instance.start_date, data["start_date"])
         self.assertIn(simple_obj, updated_instance.simple_objects.all())
-
-    def test_model_update_sets_automatically_updated_at_if_model_has_it_and_no_value_is_passed(self):
-        instance = TimestampsOpinionated()
-        instance.full_clean()
-        instance.save()
-
-        # Initial state is as follows
-        self.assertIsNotNone(instance.created_at)
-        self.assertIsNone(instance.updated_at)
-
-        update_fields = ["created_at"]
-        data = {"created_at": timezone.now() - timedelta(days=1)}
-
-        # We will pass created_at, to trigger actual model update
-        updated_instance, has_updated = model_update(instance=instance, fields=update_fields, data=data)
-
-        self.assertTrue(has_updated)
-        self.assertIsNotNone(updated_instance.updated_at)
-
-    def test_model_update_doesnt_automatically_set_updated_at_if_models_has_it_and_value_is_passed(self):
-        instance = TimestampsOpinionated()
-        instance.full_clean()
-        instance.save()
-
-        # Initial state is as follows
-        self.assertIsNotNone(instance.created_at)
-        self.assertIsNone(instance.updated_at)
-
-        update_fields = ["updated_at"]
-        updated_at = timezone.now()
-        data = {"updated_at": updated_at}
-
-        # We will pass created_at, to trigger actual model update
-        updated_instance, has_updated = model_update(instance=instance, fields=update_fields, data=data)
-
-        self.assertTrue(has_updated)
-        self.assertIsNotNone(updated_instance.updated_at)
-        self.assertEqual(updated_instance.updated_at, updated_at)
-
-    def test_model_update_does_not_automatically_update_updated_at_if_kwarg_is_false(self):
-        instance = TimestampsOpinionated()
-        instance.full_clean()
-        instance.save()
-
-        # Initial state is as follows
-        self.assertIsNotNone(instance.created_at)
-        self.assertIsNone(instance.updated_at)
-
-        update_fields = ["created_at"]
-        data = {"created_at": timezone.now() - timedelta(days=1)}
-
-        with patch("urlshortener.common.services.timezone.now") as now:
-            # We will pass created_at, to trigger actual model update
-            updated_instance, has_updated = model_update(
-                instance=instance, fields=update_fields, data=data, auto_updated_at=False
-            )
-
-            now.assert_not_called()
-
-        self.assertTrue(has_updated)
-        self.assertIsNone(updated_instance.updated_at)
 
     def test_model_update_does_not_automatically_update_updated_at_if_model_does_not_have_it(self):
         instance = SimpleModelFactory()

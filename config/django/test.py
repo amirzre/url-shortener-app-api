@@ -14,6 +14,9 @@ from .base import *  # noqa
 DEBUG = False
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
+APP_DOMAIN = os.environ.get("APP_DOMAIN", default="http://testserver")
+
+
 CELERY_BROKER_BACKEND = "memory"
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True
